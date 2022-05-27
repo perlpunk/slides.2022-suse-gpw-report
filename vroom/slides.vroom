@@ -1,0 +1,480 @@
+# This is a sample Vroom input file. It should help you get started.
+#
+# Edit this file with your content. Then run `vroom vroom` to start
+# the show!
+#
+# See `perldoc Vroom` for complete details.
+#
+---- config
+# Basic config options.
+title: German Perl & Raku Workshop 2022 Report
+indent: 5
+auto_size: 1
+# height: 18
+# width: 69
+vim_opts: '-u NONE'
+skip: 0
+
+# The following options are for Gvim usage.
+# vim: gvim
+# gvimrc: |
+#   set fuopt=maxhorz,maxvert
+#   set guioptions=egmLtT
+#   set guifont=Bitstream_Vera_Sans_Mono:h18
+#   set guicursor=a:blinkon0-ver25-Cursor
+#   colorscheme default
+
+---- center
+German Perl & Raku Workshop 2022 Report
+
+by Tina Müller
+
+----
+== Navigation
+
+* Hit <SPACE> to move forward.
+* Hit <BACKSPACE> to go backwards.
+* Hit 'Q' to quit.
+
+----
+== About me
+
+* Addicted to Perl since 1998
++* Addicted to YAML since 2017
++* Engineer at SUSE Software Solutions since 2019
++* Working on openQA & related tools
++* Maintaining the YAML Test Suite, YAML Test Matrix,
+     YAML.pm, YAML::XS, PyYAML, libyaml, and YAML::PP
+
+----
+== 23rd German Perl Workshop
+
+* Short historic background
++* Highlights from the latest perl releases
++* Workshop highlights
+
+----
+== Short survey
+
+* Who of you ever had to change perl code because it didn't work
+  anymore in a new version of perl?
++* No, Oliver, changes in signature subs don't count because they were
+  still experimental =)
++* Who of you *never* had to change python code because of a backward
+  incompatible change in python?
++* Perl is known for having very few backward incompatible changes
++* But there were a few
+
+----
+== Removal of $[
+
+* Who knows what $[ is and what it does?
++* It contains the index of the first element in an array
++* and of the first character in a substring
++* It's 0, of course
++* But it was assignable in the past! =(
++* It changed the behaviour of a perl script globally
++* At some point the effect was limited to the current source file
++* Now it's a runtime error
+
+---- perl,i4
+== # $[
+
+my @array = qw(a b c d e);
+print for @array[1..3]
+__END__
+b
+c
+d
+
+my @array = qw(a b c d e);
+$[ = 1;
+print for @array[1..3]
+__END__
+a
+b
+c
+
+---- perl,i4
+== # $[ in 5.36
+
+use v5.36;
+$[ = 1;
+say $[;
+
+----
+== New features in latest perl releases
+
+----
+== perl 5.34
+
+----
+== 5.34 - Octal numbers
+
+* Octal numbers should now be written starting with 0o
+* Consistent with hexadecimal 0x10
+
+---- perl,i4
+== # 5.34 - Octal numbers
+
+use v5.34;
+my $old = 00755;
+my $new = 0o755;
+say $old;
+say $new;
+
+----
+== perl 5.36
+
+----
+== 5.36 - strict and warnings
+
+* strict and warnings are enabled by "use v5.36"
+
+---- perl,i4
+== # 5.36 - strict and warnings
+
+use v5.36;
+my $undef;
+say $undef;
+
+---- perl,i4
+== # 5.36 - strict and warnings
+
+use v5.36;
+say $notdefined;
+
+---- perl,i4
+== # 5.36 - Other features
+
+    use v5.36;
+    # enables strict and warnings
+    # aaand a whole lot more:
+    use feature 'say';
+    use feature 'state';
+    use feature 'current_sub';
+    use feature 'fc';
+    use feature 'lexical_subs';
+    use feature 'signatures';
+    use feature 'isa';   # we will show that later
+    use feature 'bitwise';
+    use feature 'evalbytes';
+    use feature 'postderef_qq';
+      # my $s = "[@{ $h->{a} }]";
+      # equals
+      # my $s = "[$h->{a}->@*]";
+
+    use feature 'unicode_eval';
+    use feature 'unicode_strings';
+    use feature 'bareword_filehandles';
+    no feature 'indirect';
+      # my $foo = new Foo; # won't work
+      # my $foo = Foo->new; # will work
+    no feature 'multidimensional';
+
+----
+== 5.36 - Signatures not experimental anymore
+
+* perl now has function signatures
++* Not as powerful as in Python for example
++* But still helpful and saving a line of code
++* openQA / os-autoinst has been introducing them already because
+  we knew they would be leaving experimental status
+
+---- perl,i4
+== # 5.36 - isa - Checking if a var is of some class
+
+# old way
+use v5.36;
+use Scalar::Util qw(blessed);
+my $obj = bless {}, 'Butterfly';
+if (blessed $obj and $obj->isa('Butterfly')) {
+    say "Butterfly, butterfly";
+}
+
+---- perl,i4
+== # 5.36 - isa - Checking if a var is of some class
+
+# new way with the 'isa' operator
+use v5.36;
+my $obj = bless {}, 'Butterfly';
+if ($obj isa Butterfly) {
+    say "Butterfly, butterfly";
+}
+
+----
+== 5.36 - try/catch/finally
+
+* New experimental feature: try {} catch($e) {} finally {}
+
+---- perl,i5
+== # 5.36 - try/catch/finally
+
+# using eval:
+sub foo {
+    eval {
+        do_something();
+        return if ...; # will only return out of the eval
+    };
+    if ($@) {
+    }
+}
+
+---- perl,i4
+== # 5.36 - try/catch/finally
+
+use v5.36;
+use experimental qw/ try /;
+sub foo {
+    try {
+        do_something();
+        return; # This will return from the subroutine
+    }
+    catch($e) {
+        warn "Oh no: $e";
+    }
+    finally {
+        say "This will be executed in any case";
+    }
+}
+
+----
+== 5.36 - for loops
+
+* You can now iterate over more than one item at a time
+
+---- perl,i4
+== # 5.36 - for loops
+
+use v5.36;
+use experimental qw/ for_list /;
+my %hash = (apples => 23, oranges => 4);
+for my ($key, $value) (%hash) {
+    say "$key: $value";
+}
+
+my @coords = (3,4,7, 1,1,2, 5,5,3);
+for my ($x, $y, $z) (@coords) {
+    say "$x,$y,$z";
+}
+
+----
+== 5.36 - New namespace 'builtin'
+
+* Several useful functions in the automatially loaded 'builtin' namespace
+* experimental
+* Functions:
+    true false is_bool
+    weaken unweaken is_weak
+    blessed refaddr reftype
+    created_as_string created_as_number
+    ceil floor
+    indexed
+    trim
+
+---- perl,i4
+== # 5.36 - builtin::reftype
+
+use v5.36;
+use experimental qw/ builtin /;
+my $x = [];
+say builtin::reftype($x);
+
+---- perl,i4
+== # 5.36 - builtin::indexed
+
+use v5.36;
+use experimental qw/ builtin /;
+my @a = qw/ apple orange /;
+say for builtin::indexed @a;
+__END__
+0
+apple
+1
+orange
+
+----
+== 5.36 - defer blocks
+
+* New feature defer
+* experimental
+* Code defined in a defer block will be executed at the end of the scope
+
+---- perl,i4
+== # 5.36 - defer blocks
+
+use v5.36;
+use experimental qw/ defer /;
+sub foo {
+  defer { say "this happens at the end of the scope" }
+  say "start";
+  say "end";
+}
+foo();
+say "After foo()";
+
+----
+== 5.36 - @_ in signature subs is now experimental aka deprecated
+
+* In most signature subs @_ is no longer needed
+* They want to remove this variable there completely to improve performance
+* So it's best to remove either @_ or the signature
+
+---- perl,i4
+== # 5.36 - @_ in signature subs
+
+use v5.36;
+sub inc { $_[0]++ }
+my $x = 23;
+inc($x);
+say $x;
+### 24
+sub new_inc($var) { $var++ }
+new_inc($x);
+say $x;
+### 24
+sub new_inc2($var) { $_[0]++ }
+new_inc2($x);
+say $x;
+### Use of @_ in array element with signatured subroutine is experimental at -e line 9.
+### 25
+
+----
+== 5.36 - booleans!
+
+* perl has now "real" booleans
+* experimental
+* It's not a new type of variable, but the scalar gets a magic internal flag
+* Important when interchanging data with other applications, often using JSON or
+  YAML
+
+---- perl,i4
+== # 5.36 - booleans
+
+use v5.36;
+use experimental qw/ builtin /;
+my $false = !1;
+my $true = builtin::true;
+say builtin::is_bool($false);
+say builtin::is_bool($true);
+say $true;
+
+# Have a look at the internals
+use Devel::Peek;
+Dump $true;
+
+---- perl,i4
+== # 5.36 - trim
+
+use v5.36;
+use experimental qw/ builtin /;
+my $string = "   string with spaces around    ";
+my $trimmed = builtin::trim $string;
+say ">>$trimmed<<";
+
+----
+== 5.36 - misc
+
+* Variable length lookbehind is mostly no longer considered experimental
+
+----
+== Outlook - Features not yet decided on
+
+* Builtin advanced OO system (working title: Corinna)
+* Type checking
+* Generic in: operator
+    if ( $x in:== (1, 2, 3, 5, 7, 11, 17) )
+
+---- perl,i4
+== # Outlook - match
+
+# How it could look like
+match($n : ==) {
+   case(0)          { say "None"  }
+   case(1)          { say "One"   }
+   case(2)          { say "Two"   }
+   case(3), case(4) { say "A few" }
+   default          { say "Lots"  }
+}
+
+----
+== Workshop Highlights
+
+* 20 attendees locally in Leipzig
+* 3 days
+* 34 talks
+* The videos are still not uploaded, unfortunately
+* I was hoping to be able to give you the video links today
+
+----
+== Talks - Max Maischein - Offline Speech Recognition with Perl
+
+* Max introduced the speech recognition software Vosk
+* https://alphacephei.com/vosk
+* https://corion.net/talks
+* He showed his perl module using it and did a live demo
+* I looked at the website and found out the git repo already contains
+  runnable python examples
+* I adapted one and will show it
+
+----
+== vosk - Live demo
+
+
+----
+== Talks - Thomas Klausner - QRona - Validating Corona certificates for fun and ... safety?
+
+* Thomas showed a perl program running on his phone which scans vaccination
+  certificates and validates them
+* https://domm.plix.at/talks/qrona.html
+
+----
+== Talks - Tina Müller - News from the YAML world
+
+* A good portion of the talk can be found in this week's DevOps meetup
+  recording
+* I gave some updates about what happened in the YAML world in the last
+  two years
+* Specification, new libraries, new features in perl YAML modules
+* Introduced yamltidy
+
+----
+== Talks - Renée Bäcker - OWASP Top Ten 2021
+
+* https://owasp.org/ - Open Web Application Security Project
+* is a non-profit foundation
+* They publish a list of the top security risks in Web Apps
+* He talked about the latest update from 2021
+* https://talks.perl-academy.de/2022/gpw/owasp_top_10/
+* Server-Side Request Forgery
+* Security Logging and Monitoring Failures
+* Software and Data Integrity Failures
+* Identification and Authentication Failures
+* Vulnerable and Outdated Components
+* Security Misconfiguration
+* Insecure Design
+* Injection
+* Cryptographic Failures
+
+----
+== Talks - Max Maischein - Reverse Engineering Hardware with Perl
+
+* Max talked about fiddling with hardware to eventually build his own tools
+* https://corion.net/talks
+
+----
+== Talks - Curtis Poe - Corinna
+
+* Ovid talked about the status of his Object Oriented System
+* https://www.slideshare.net/Ovid/corinna-status-2022pptx
+
+----
+== Talks
+
+* Complete list of talks: https://act.yapc.eu/gpw2022/talks
+
+----
+== Questions?
+
+----
+== Thanks! =)

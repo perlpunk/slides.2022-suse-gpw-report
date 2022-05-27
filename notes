@@ -1,0 +1,217 @@
+https://metacpan.org/release/RJBS/perl-5.36.0-RC3/view/pod/perldelta.pod
+https://go.leonerd.org.uk/road-to-2025
+https://ftp.fau.de/fosdem/2021/D.perl/perl_in_2025.mp4
+https://talks.perl-academy.de/2022/gpw/perl_features/
+
+
+# 5.34
+
+new octal syntax 0o7
+
+# 5.36
+
+# strict & warnings
+
+    use v5.36;
+    # enables strict and warnings
+    # aaand a whole lot more:
+    use feature 'say';
+    use feature 'state';
+    use feature 'current_sub';
+    use feature 'fc';
+    use feature 'lexical_subs';
+    use feature 'signatures';
+    use feature 'isa';
+    use feature 'bitwise';
+    use feature 'evalbytes';
+    use feature 'postderef_qq';
+      # my $s = "[@{ $h->{a} }]";
+      # equals
+      # my $s = "[$h->{a}->@*]";
+
+    use feature 'unicode_eval';
+    use feature 'unicode_strings';
+    use feature 'bareword_filehandles'; # ???
+    no feature 'indirect';
+      # my $foo = new Foo; # won't work
+      # my $foo = Foo->new; # will work
+    no feature 'multidimensional';
+
+
+# signatures
+
+not experimental any more
+
+# isa
+
+use Scalar::Util qw(blessed);
+if (blessed $obj and $obj->isa('Butterfly')) {
+}
+
+5.36
+if ($obj isa Butterfly) {
+}
+
+# try/catch/finally
+
+experimental
+
+    eval...
+    sub foo($bar) {
+        my $ok = eval {
+            do_something;
+            return if ...; # will only return out of the eval
+        };
+    }
+
+    use Syntax::Keyword::Try;
+
+    sub foo($bar) {
+        try {
+            return ...; # returns from subroutine
+        }
+        catch {
+            return ...; # returns from subroutine
+        }
+    }
+
+
+    try {
+        attempt();
+        print "Success\n";
+    }
+    catch ($e) {
+        print "Failure\n";
+    }
+    finally {
+        print "This happens regardless\n";
+    }
+
+# Variable length lookbehind is mostly no longer considered experimental
+
+# for
+
+experimental
+
+    for my ($key, $value) (%hash) { ... }
+    for my ($left, $right, $gripping) (@moties) { ... }
+
+# builtin
+
+experimental
+
+    say "Reference type of arrays is ", builtin::reftype([]);
+    use builtin 'reftype';
+    say "Reference type of arrays is ", reftype([]);
+
+# defer
+
+https://metacpan.org/pod/release/RJBS/perl-5.36.0-RC3/pod/perlsyn.pod#defer-blocks
+
+    use feature 'defer';
+
+    {
+        say "This happens first";
+        defer { say "This happens last"; }
+
+        say "And this happens inbetween";
+    }
+
+
+# @_
+
+@_ is now experimental within signatured subs
+
+# booleans
+
+    builtin::true, builtin::false, builtin::is_bool
+
+    use experimental qw(builtin);
+    my $x = bultin::false;
+    say builtin::is_bool($x);
+    # 1
+
+# trim
+
+# Syntax::Keyword::Match
+
+    match($n : ==) {
+       case(0)          { say "None"  }
+       case(1)          { say "One"   }
+       case(2)          { say "Two"   }
+       case(3), case(4) { say "A few" }
+       default          { say "Lots"  }
+    }
+
+
+# Future
+
+Builtin OO system (Corinna, Object::Pad)
+
+Type checking
+
+    my $var is Hexagonal;
+    method f ($y is Hexagonal) {...}
+
+Generic in: operator
+
+    if ( $x in:== (1, 2, 3, 5, 7, 11, 17) )
+
+# $[
+
+    # perl -wle'
+    my @array = qw(a b c d e);
+    print for @array[0..2]'
+    a
+    b
+    c
+    # perl -wle'
+    my @array = qw(a b c d e);
+    $[ = 1;
+    print for @array[1..3]'
+    a
+    b
+    c
+
+    % perl -wE'$[ = 1;'
+    Use of assignment to $[ is deprecated at -e line 1.
+
+
+
+# Talks
+
+Offline-Spracherkennung mit Perl
+https://act.yapc.eu/gpw2022/talk/7794
+https://metacpan.org/pod/Speech::Recognition::Vosk::Recognizer
+https://alphacephei.com/vosk/install
+https://corion.net/talks
+
+Covid Zertifikate validieren for Fun and .. Sicherheit?
+https://act.yapc.eu/gpw2022/talk/7791
+https://domm.plix.at/talks/qrona.html
+
+News from the YAML world
+https://act.yapc.eu/gpw2022/talk/7796
+https://perlpunk.github.io/slides.2022.gpw/yaml-news/
+
+OWASP Top Ten 2021
+https://act.yapc.eu/gpw2022/talk/7775
+https://talks.perl-academy.de/2022/gpw/owasp_top_10/
+
+Reverse Engineering von Geräten mit Perl
+https://act.yapc.eu/gpw2022/talk/7778
+https://corion.net/talks
+
+Corinna
+https://act.yapc.eu/gpw2022/talk/7782
+https://www.slideshare.net/Ovid/corinna-status-2022pptx
+
+
+
+
+Änderungen in Perl
+https://act.yapc.eu/gpw2022/talk/7776
+https://talks.perl-academy.de/2022/gpw/perl_features/
+
+
+
