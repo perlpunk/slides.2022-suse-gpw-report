@@ -1,0 +1,98 @@
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function navigate(e) {
+    var keynum = (window.event) // IE
+        ? e.keyCode
+        : e.which;
+    if (keynum == 8) {
+        window.location = "039" + ".html";
+        return false;
+    }
+    if (keynum == 13 || keynum == 32) {
+        window.location = "041" + ".html";
+        return false;
+    }
+    if (keynum == 73 || keynum == 105) {
+        window.location = "index.html";
+        return false;
+    }
+    return true;
+}
+</script>
+</head>
+<body onkeydown="return navigate(event)">
+<div style="border-style: solid ; border-width: 2px ; font-size: x-large">
+<pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                           Talks - Max Maischein - Offline Speech Recognition with Perl
+
+     * Max introduced the speech recognition software Vosk
+     * https://alphacephei.com/vosk
+     * https://corion.net/talks
+     * He showed his perl module using it and did a live demo
+     * I looked at the website and found out the git repo already contains
+       runnable python examples
+     * I adapted one and will show it
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+<br>
+<div style="font-size: small">
+<p></p>
+</div>
+</body>
+</html>
